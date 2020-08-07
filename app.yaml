@@ -1,0 +1,33 @@
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Hello World application
+Parameters:
+
+  ImageId:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: mykey
+
+Resources:
+  Lc:
+    Properties:
+      InstanceType: t2.micro
+      ImageId: !Ref ImageId
+      SecurityGroups:
+        - !Ref AppSg
+      KeyName: !Ref KeyName
+      IamInstanceProfile: !Ref AppInstanceProfile
+      UserData:
+        Fn::Base64:
+          Fn::Join:
+            - ""
+            - - |
+                #!/bin/bash
+              - |
+                # example
+              - "/opt/aws/bin/cfn-init -v"
+              - " --stack "
+              - !Ref "AWS::StackName"
